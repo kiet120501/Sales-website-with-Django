@@ -1,0 +1,182 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+	<div class ="row">
+		<form id="form">
+			<div id="order-info">
+				<div class="form-field">
+					<input required class="form-control" type="text" name="order" placeholder="Order..">
+				</div>
+				<input id="form-button" class="btn btn-primary btn-block" type="submit" value="Search">
+			</div>
+			
+		</form>
+	</div>
+     <div class="row">
+		<div class="col-lg-6">
+			<div class="box-element" id="form-wrapper">
+				<form id="form">
+					<hr><b>
+					<p>Customer Information:</p></b>
+					<hr>
+					<div class="box-element hidden" id="customer-info">
+						{% if shipping %}
+							<div class="form-field">
+								<div style="flex:2"><p>Name: {{shipping.customer.name}}</p></div>
+								<div style="flex:2"><p>Email: {{shipping.customer.email}}</p></div>
+							</div>
+						{% else %}
+							<h5>Your cart is empty</h5>
+							<script>
+								document.getElementById("customer-info").innerHTML = "";
+							</script>
+						{% endif %}
+					</div>
+					<hr>
+					<b><p>Shipping Information:</p></b>
+					<hr>
+					<div class="box-element hidden" id="shipping-info">
+						<div>
+							{% if shipping %}
+							<div>
+								<div style="flex:2"><p>Address: {{shipping.shippingAddress.adress}}</p></div>
+								<div style="flex:2"><p>City: {{shipping.shippingAddress.city}}</p></div>
+								<div style="flex:2"><p>City: {{shipping.shippingAddress.date_added}}</p></div>
+							</div>
+							{% else %}
+								<h5>Your cart is empty</h5>
+								<script>
+									document.getElementById("shipping-info").innerHTML = "";
+								</script>
+							{% endif %}
+						</div>
+					</div>
+					<hr>
+				</form>
+			</div>
+
+			<br>
+
+		</div>
+
+		<div class="col-lg-6">
+			<hr>
+			<h3>Order Summary</h3>
+			<hr>
+			<div class="box-element hidden" id="cart-items">
+				{% if items %}
+					{% for item in items %}
+					<div class="cart-row">
+						<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+						<div style="flex:2"><p>{{item.product.name}}</p></div>
+						<div style="flex:1"><p>{{item.product.price|floatformat:2}} VND</p></div>
+						<div style="flex:1"><p>x{{item.quantity}}</p></div>
+					</div>
+					{% endfor %}
+				{% else %}
+					<h5>Your cart is empty</h5>
+					<script>
+						document.getElementById("cart-items").innerHTML = "";
+					</script>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		//var shipping = '{{order.shipping}}'
+	
+		var form = document.getElementById('form')
+		form.addEventListener('submit', function(e){
+			e.preventDefault()
+			console.log('Form Submitted...')
+			document.getElementById('cart-items').classList.add("hidden");
+			document.getElementById('cart-items').classList.remove("hidden");
+			//customer-info
+			document.getElementById('customer-info').classList.add("hidden");
+			document.getElementById('customer-info').classList.remove("hidden");
+			//shipping-info
+			document.getElementById('shipping-info').classList.add("hidden");
+			document.getElementById('shipping-info').classList.remove("hidden");
+			submitFormData()
+		})
+	
+		function getToken(name) {
+			var cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				var cookies = document.cookie.split(';');
+				for (var i = 0; i < cookies.length; i++) {
+					var cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+		
+		function submitFormData(){
+			console.log('Search button clicked')
+			var orderFormData ={'order': form.order.value}
+			var url = "/search_ordered/"
+			var csrftoken = getToken('csrftoken')
+			fetch(url, {
+				method:'POST',
+				headers:{
+					'Content-Type':'application/json',
+					'X-CSRFToken':csrftoken,
+				},
+				body:JSON.stringify({'form':orderFormData}),
+			})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then((data) => {
+				console.log('Success:', data);
+				cart = {}
+				document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+				// Update the items in the cart
+				var itemsHtml = "";
+				var customerinfoHtml = "";
+				var shippAddressInfoHtml = "";
+				for (var i = 0; i < data.items.length; i++) {
+					var item = data.items[i];
+					itemsHtml += '<div class="cart-row">';
+					itemsHtml += '<div style="flex:2"><img class="row-image" src="' + item.product.imageURL + '"></div>';
+					itemsHtml += '<div style="flex:2"><p>' + item.product.name + '</p></div>';
+					itemsHtml += '<div style="flex:1"><p>' + item.product.price.toFixed(2) + ' VND</p></div>';
+					itemsHtml += '<div style="flex:1"><p>x' + item.quantity + '</p></div>';
+					itemsHtml += '</div>';
+				}
+				itemsHtml += '<h5>Items:   ' + data.cart_items + '</h5>';
+				itemsHtml += '<h5>Total:   ' + data.cart_total.toFixed(2) + ' VND</h5>';
+				// customer-info
+				customerinfoHtml +='<div class="form-field">'
+				customerinfoHtml +='<div style="flex:2"><p> Name: ' + data.shipping.customer.name + '</p></div>'
+				customerinfoHtml +='<div style="flex:2"><p> Email: ' + data.shipping.customer.email + '</p></div>'
+				customerinfoHtml +='</div>';
+				//shipping-info
+				shippAddressInfoHtml +='<div>'
+				shippAddressInfoHtml +='<div style="flex:2"><p> Address: ' + data.shipping.shippingAddress.adress + '</p></div>'
+				shippAddressInfoHtml +='<div style="flex:2"><p> City: ' + data.shipping.shippingAddress.city + '</p></div>'
+				shippAddressInfoHtml +='<div style="flex:2"><p> Date: ' + data.shipping.shippingAddress.date_added + '</p></div>'
+				shippAddressInfoHtml +='</div>';
+				document.getElementById('customer-info').innerHTML = customerinfoHtml;
+				document.getElementById('shipping-info').innerHTML = shippAddressInfoHtml;
+				document.getElementById('cart-items').innerHTML = itemsHtml;
+			})
+			.catch((error) => {
+				document.getElementById('customer-info').innerHTML = 'Your cart is empty';
+				document.getElementById('shipping-info').innerHTML = 'Your cart is empty';
+				document.getElementById('cart-items').innerHTML = 'Your cart is empty';
+				console.error('Error:', error);
+			});
+			
+		}
+	</script>	
+{% endblock content %}

@@ -1,0 +1,72 @@
+{% extends 'store/main.html' %} {% load static %} {% block content %}
+<div class="container px-4 px-lg-5 mt-5">
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        {% for product in page_data %}
+        <div class="col mb-5">
+            <div class="card h-100">
+                <!-- Product image-->
+                <img class="card-img-top" style="height: 60%;" src="{{ product.imageURL }}" alt="{{ product.name }}" />
+                <!-- Product details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <!-- Product name-->
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+                        <!-- Product price-->
+                        ${{ product.price }}
+                        <p>Số lượng còn lại: {{ product.quantity }}</p>
+                    </div>
+                </div>
+                <!-- Product actions-->
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                        {% if product.quantity <= 0 %} <span>Sản phẩm đã bán hết</span>
+                            {% else %}
+                            <button class="btn btn-outline-dark mt-auto btn-add" data-id="{{ product.id }}">
+                                Add to cart
+                            </button>
+                            {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor product in products %}
+    </div>
+    <div class="text-center d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                {% if page_data.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_data.previous_page_number }}">Previous</a></li>
+                {% endif %}
+                {% for i in page_range %}
+                {% if i == current_page %}
+                <li class="page-item"><span class="page-link" style="background-color: lightgray">{{ i }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+                {% endfor %}
+                {% if page_data.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_data.next_page_number }}" data-page="">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock content %} {% block scripts %}
+<script>
+    $(".btn-add").click(function () {
+        const productId = Number($(this).data("id"));
+        $.post({
+            url: '/update_cart/',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify({
+                productId,
+                action: 'ADD'
+            })
+        }).done((data) => {
+            document.cookie = "cart=" + JSON.stringify(data.items) + ";domain=;path=/";
+            updateCartDisplay(data)
+        })
+    });
+</script>
+{% endblock scripts %}

@@ -1,0 +1,7 @@
+{% extends "store/admin/revenue.html" %} {% load i18n admin_list %} {% block result_list %} {{ block.super }}
+{% trans "Tổng doanh thu" %}: {{ cl.total_revenue|floatformat:2 }} VNĐ
+
+{% endblock %} {% block content %} {{ block.super }}
+{% trans "Tổng doanh thu" %}: {{ total_revenue|floatformat:2 }} VNĐ
+
+{% endblock %}

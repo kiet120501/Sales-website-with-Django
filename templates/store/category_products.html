@@ -1,0 +1,62 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container px-4 px-lg-5 mt-5">
+    <h2 class="fw-bolder mb-4">{{ category.name }} Products</h2>
+    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+        {% for product in products %}
+        <div class="col mb-5">
+            <div class="card h-100">
+                <img class="card-img-top" src="{{ product.imageURL }}" alt="{{ product.name }}" />
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+                        ${{ product.price|floatformat:2 }}
+                    </div>
+                </div>
+                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                    <div class="text-center">
+                        <a class="btn btn-outline-dark mt-auto add-to-cart-btn" data-product="{{ product.id }}">Add to cart</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <a href="{% url 'store' %}" class="btn btn-primary btn-block">Home</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'cart' %}" class="btn btn-info btn-block">View Cart</a>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'cart' %}" class="btn btn-success btn-block">View Cart</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.add-to-cart-btn').click(function() {
+        var productId = $(this).data('product');
+        $.ajax({
+            url: '{% url "update_item" %}',
+            method: 'POST',
+            headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            data: {
+                'productId': productId,
+                'action': 'add'
+            },
+            success: function(response) {
+                alert('Product added to cart!');
+                $('.cart-items-count').text(response.cartItems);
+            }
+        });
+    });
+});
+</script>
+{% endblock content %}

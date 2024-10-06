@@ -1,0 +1,28 @@
+{% extends 'store/authentication_main.html' %}
+{% load static %}
+{% block content %}
+<form class="login" action="/login" method="post">
+    {% csrf_token %}
+    <div class="login__field">
+        <i class="login__icon fas fa-user"></i>
+        {{ form.username }}
+    </div>
+    <div class="login__field">
+        <i class="login__icon fas fa-lock"></i>
+        {{ form.password }}
+    </div>
+    <button class="button login__submit">
+        <span class="button__text">Log In Now</span>
+        <i class="button__icon fas fa-chevron-right"></i>
+    </button>
+    <a href="/sign-up">Đăng ký</a>
+</form>
+<div class="social-login">
+    <h3>log in via</h3>
+    <div class="social-icons">
+        <a href="#" class="social-login__icon fab fa-instagram"></a>
+        <a href="#" class="social-login__icon fab fa-facebook"></a>
+        <a href="#" class="social-login__icon fab fa-twitter"></a>
+    </div>
+</div>
+{% endblock content %}

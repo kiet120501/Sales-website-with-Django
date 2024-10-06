@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_list %}
+
+{% block result_list %}
+    {{ block.super }}
+    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="margin-left: 10px; font-weight: bold; font-size: 1.2em;">{% trans "Total revenue" %}:</span>
+        <span style="margin-right: 280px; font-size: 1.2em;color: green;">{{ cl.total_revenue|floatformat:2  }} VNĐ</span>
+    </div>
+{% endblock %}

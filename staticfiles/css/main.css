@@ -12700,43 +12700,72 @@ body {
 }
 
 .activity-checkout {
-    list-style: none
+    list-style: none;
+    padding-left: 0; /* Loại bỏ padding mặc định của ol/ul */
 }
 
 .activity-checkout .checkout-icon {
     position: absolute;
     top: -4px;
-    left: -24px
+    left: -24px; 
 }
 
 .activity-checkout .checkout-item {
     position: relative;
     padding-bottom: 24px;
     padding-left: 35px;
-    border-left: 2px solid #f5f6f8
+    border-left: 2px solid #f5f6f8;
 }
 
+/* Mục đầu tiên sẽ có màu xanh dương */
 .activity-checkout .checkout-item:first-child {
-    border-color: #3b76e1
+    border-color: #3b76e1; /* Đặt màu xanh dương cho đường bên trái */
 }
 
-.activity-checkout .checkout-item:first-child:after {
-    background-color: #3b76e1
+.activity-checkout .checkout-item:first-child .checkout-icon .avatar-title {
+    background-color: #3b76e1; /* Đặt màu nền xanh dương cho avatar */
 }
 
-.activity-checkout .checkout-item:last-child {
-    border-color: transparent
+/* Đặt màu cho mục Shipping Info */
+.activity-checkout .checkout-item:nth-child(2) {
+    border-color: #3b76e1; /* Đặt màu xanh dương cho đường của Shipping Info */
 }
 
+.activity-checkout .checkout-item:nth-child(2) .checkout-icon .avatar-title {
+    background-color: #3b76e1; /* Đặt màu nền xanh dương cho avatar của Shipping Info */
+}
+
+/* Đặt màu cho mục Payment Method */
+.activity-checkout .checkout-item:nth-child(3) {
+    border-color: #3b76e1; /* Đặt màu xanh dương cho đường của Payment Method */
+}
+
+.activity-checkout .checkout-item:nth-child(3) .checkout-icon .avatar-title {
+    background-color: #3b76e1; /* Đặt màu nền xanh dương cho avatar của Payment Method */
+}
+
+/* Đặt màu cho icon và đường xanh ở mục cuối cùng */
+.activity-checkout .checkout-item:nth-child(4) {
+    border-color: #3b76e1; /* Đặt màu xanh dương cho đường của mục cuối cùng */
+}
+
+.activity-checkout .checkout-item::nth-child(4) .checkout-icon .avatar-title {
+    background-color: #3b76e1; /* Đặt màu nền xanh dương cho avatar của mục cuối cùng */
+}
+
+/* Tùy chỉnh cho mục có class crypto-activity */
 .activity-checkout .checkout-item.crypto-activity {
-    margin-left: 50px
+    margin-left: 50px;
 }
 
+/* Tùy chỉnh vị trí của crypto-date trong mục */
 .activity-checkout .checkout-item .crypto-date {
     position: absolute;
-    top: 3px;
-    left: -65px
+    top: 3px;  
+    left: -65px; 
 }
+
+
 
 
 

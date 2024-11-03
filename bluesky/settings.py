@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+from django.core.management.utils import get_random_secret_key
 
 import os
 from pathlib import Path
@@ -134,12 +135,14 @@ WHITENOISE_USE_FINDERS = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATIC_URL = '/static/' 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
         os.path.join(BASE_DIR, "static"),
 ]
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 
 MEDIA_URL = '/images/'
 
@@ -149,3 +152,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+print('🔍 STATICFILES_DIRS:', STATICFILES_DIRS)
+print('🔍 STATIC_URL:', STATIC_URL)
+print('🔍 STATIC_ROOT:', STATIC_ROOT)
